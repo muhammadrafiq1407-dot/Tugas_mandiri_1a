@@ -3,45 +3,18 @@ from typing import Any
 
 
 class Node:
-    """
-    Merepresentasikan satu elemen dalam singly linked list.
-
-    Attributes:
-        data: Data yang disimpan dalam node.
-        next: Referensi menuju node berikutnya.
-    """
-
     def __init__(self, data: Any) -> None:
         self.data = data
         self.next: Node | None = None
 
 
 class LinkedList:
-    """
-    Mengelola kumpulan data mahasiswa menggunakan singly linked list.
-
-    Operasi:
-    - tambah: Menambahkan mahasiswa di akhir list.
-    - hapus_by_nim: Menghapus mahasiswa berdasarkan NIM.
-    - cari_by_nim: Mencari mahasiswa berdasarkan NIM.
-    - tampilkan: Mengambil seluruh data mahasiswa.
-    - jumlah: Menghitung jumlah node.
-    - kosong: Memeriksa apakah list kosong.
-    - bersihkan: Menghapus seluruh node.
-    """
-
     def __init__(self) -> None:
-        """Menginisialisasi linked list kosong."""
         self.head: Node | None = None
         self.tail: Node | None = None
         self._size: int = 0
 
     def tambah(self, data: Any) -> None:
-        """
-        Menambahkan mahasiswa ke akhir linked list.
-
-        Kompleksitas waktu: O(1).
-        """
         if data is None:
             raise ValueError("Data mahasiswa tidak boleh None.")
 
@@ -57,17 +30,6 @@ class LinkedList:
         self._size += 1
 
     def hapus_by_nim(self, nim: str) -> bool:
-        """
-        Menghapus mahasiswa berdasarkan NIM.
-
-        Returns:
-            True jika data berhasil dihapus.
-            False jika NIM tidak ditemukan.
-
-        Kompleksitas waktu:
-            Best case: O(1).
-            Worst case: O(n).
-        """
         current = self.head
         previous = None
 
@@ -99,12 +61,6 @@ class LinkedList:
         return False
 
     def cari_by_nim(self, nim: str) -> Any | None:
-        """
-        Mencari mahasiswa berdasarkan NIM.
-
-        Returns:
-            Objek mahasiswa jika ditemukan, None jika tidak.
-        """
         current = self.head
 
         while current is not None:
@@ -116,7 +72,6 @@ class LinkedList:
         return None
 
     def tampilkan(self) -> list[Any]:
-        """Mengembalikan seluruh data mahasiswa dalam bentuk list."""
         hasil = []
         current = self.head
 
@@ -127,15 +82,12 @@ class LinkedList:
         return hasil
 
     def jumlah(self) -> int:
-        """Mengembalikan jumlah node dalam linked list."""
         return self._size
 
     def kosong(self) -> bool:
-        """Memeriksa apakah linked list kosong."""
         return self.head is None
 
     def bersihkan(self) -> None:
-        """Menghapus seluruh node dari linked list."""
         current = self.head
 
         while current is not None:
@@ -148,11 +100,9 @@ class LinkedList:
         self._size = 0
 
     def __len__(self) -> int:
-        """Memungkinkan penggunaan len() pada objek linked list."""
         return self._size
 
     def __iter__(self):
-        """Memungkinkan linked list digunakan dalam perulangan."""
         current = self.head
 
         while current is not None:
@@ -160,5 +110,4 @@ class LinkedList:
             current = current.next
 
     def __str__(self) -> str:
-        """Menghasilkan representasi linked list yang mudah dibaca."""
         return " -> ".join(str(data) for data in self)

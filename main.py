@@ -1,3 +1,6 @@
+import time
+from datetime import datetime
+
 from src.data_structur.Array import ArrayMahasiswa
 from src.data_structur.Link_list import LinkedList
 from src.data_structur.hash_table import HashTable
@@ -16,15 +19,12 @@ class Sismik:
         # Hash Table untuk pencarian mahasiswa berdasarkan NIM
         self.index_nim = HashTable()
 
-        # Stack untuk fitur Undo (LIFO)
-        self.history_undo = Stack()
+        # Stack untuk fitur Undo (LIFO) dengan batas maksimum 6 kali
+        self.history_undo = Stack(max_capacity=6)
 
         # Queue untuk antrean layanan (FIFO)
         self.antrean_layanan = Queue()
 
-    # ==================================================
-    # 1. MENAMBAHKAN MAHASISWA
-    # ==================================================
 
     def tambah_mahasiswa(
         self,
@@ -34,22 +34,15 @@ class Sismik:
         email,
         angkatan
     ):
-        """
-        Menambahkan mahasiswa ke dalam sistem.
-
-        Data mahasiswa disimpan ke:
-        - Array
-        - Linked List
-        - Hash Table
-
-        Aksi penambahan dicatat ke Stack untuk Undo.
-        """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         # Pastikan NIM belum digunakan
         if self.index_nim.contains(nim):
+            t_elapsed = (time.perf_counter() - t_start) * 1000
             print(
-                f"[ERROR] Mahasiswa dengan NIM {nim} "
-                f"sudah terdaftar."
+                f"[{waktu_sekarang}] [ERROR] Mahasiswa dengan NIM {nim} "
+                f"sudah terdaftar. (Waktu: {t_elapsed:.4f} ms)"
             )
             return False
 
@@ -62,50 +55,35 @@ class Sismik:
             angkatan=angkatan
         )
 
-        # ----------------------------------------------
-        # Simpan ke Array
-        # ----------------------------------------------
         self.daftar_berurutan.tambah(mhs)
-
-        # ----------------------------------------------
-        # Simpan ke Linked List
-        # ----------------------------------------------
         self.daftar_dinamis.tambah(mhs)
-
-        # ----------------------------------------------
-        # Simpan ke Hash Table
-        # NIM digunakan sebagai KEY
-        # ----------------------------------------------
         self.index_nim.insert(nim, mhs)
-
-        # ----------------------------------------------
-        # Simpan histori ke Stack
-        # Stack menggunakan prinsip LIFO
-        # ----------------------------------------------
         self.history_undo.push(("TAMBAH", mhs))
 
+        t_elapsed = (time.perf_counter() - t_start) * 1000
         print(
-            f"[SUCCESS] Mahasiswa {nama} ({nim}) "
-            f"berhasil ditambahkan."
+            f"[{waktu_sekarang}] [SUCCESS] Mahasiswa {nama} ({nim}) "
+            f"berhasil ditambahkan. (Durasi: {t_elapsed:.4f} ms)"
         )
 
         return True
 
-    # ==================================================
-    # 2. MENAMPILKAN SELURUH MAHASISWA
-    # ==================================================
 
     def tampilkan_mahasiswa(self):
         """
         Menampilkan seluruh mahasiswa menggunakan Array.
         """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
-        print("\n=== DAFTAR MAHASISWA ===")
+        print(f"\n=== DAFTAR MAHASISWA [{waktu_sekarang}] ===")
 
         data = self.daftar_berurutan.tampilkan()
 
         if not data:
             print("Belum ada data mahasiswa.")
+            t_elapsed = (time.perf_counter() - t_start) * 1000
+            print(f"(Durasi tampilkan: {t_elapsed:.4f} ms)")
             return
 
         for nomor, mhs in enumerate(data, start=1):
@@ -117,9 +95,9 @@ class Sismik:
                 f"Angkatan: {mhs.angkatan}"
             )
 
-    # ==================================================
-    # 3. PENCARIAN MAHASISWA BERDASARKAN NIM
-    # ==================================================
+        t_elapsed = (time.perf_counter() - t_start) * 1000
+        print(f"(Durasi tampilkan: {t_elapsed:.4f} ms)")
+
 
     def cari_mahasiswa_by_nim(self, nim):
         """
@@ -128,50 +106,43 @@ class Sismik:
 
         Average Case: O(1)
         """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         hasil = self.index_nim.search(nim)
+        t_elapsed = (time.perf_counter() - t_start) * 1000
 
         if hasil:
             print(
-                f"[CARI FOUND] NIM {nim} -> "
-                f"{hasil.nama}"
+                f"[{waktu_sekarang}] [CARI FOUND] NIM {nim} -> "
+                f"{hasil.nama} (Pencarian Hash Table: {t_elapsed:.4f} ms)"
             )
         else:
             print(
-                f"[CARI NOT FOUND] Mahasiswa dengan "
-                f"NIM {nim} tidak ditemukan."
+                f"[{waktu_sekarang}] [CARI NOT FOUND] Mahasiswa dengan "
+                f"NIM {nim} tidak ditemukan. (Pencarian Hash Table: {t_elapsed:.4f} ms)"
             )
 
         return hasil
 
-    # ==================================================
-    # 4. FITUR UNDO
-    # ==================================================
 
     def undo(self):
-        """
-        Membatalkan aksi terakhir menggunakan Stack.
-
-        Stack menggunakan prinsip:
-        LIFO (Last In, First Out)
-        """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         aksi_terakhir = self.history_undo.pop()
 
         if not aksi_terakhir:
+            t_elapsed = (time.perf_counter() - t_start) * 1000
             print(
-                "[UNDO FAILED] Tidak ada riwayat "
-                "aksi untuk di-undo."
+                f"[{waktu_sekarang}] [UNDO FAILED] Tidak ada riwayat "
+                f"aksi untuk di-undo. (Waktu: {t_elapsed:.4f} ms)"
             )
             return False
 
         jenis_aksi, mhs = aksi_terakhir
 
-        # ----------------------------------------------
-        # Jika aksi terakhir adalah TAMBAH
-        # ----------------------------------------------
         if jenis_aksi == "TAMBAH":
-
             # Hapus dari Array
             self.daftar_berurutan.hapus_terakhir()
 
@@ -181,39 +152,33 @@ class Sismik:
             # Hapus dari Hash Table berdasarkan NIM
             self.index_nim.delete(mhs.nim)
 
+            t_elapsed = (time.perf_counter() - t_start) * 1000
             print(
-                f"[UNDO SUCCESS] Membatalkan penambahan "
-                f"mahasiswa: {mhs.nama} ({mhs.nim})"
+                f"[{waktu_sekarang}] [UNDO SUCCESS] Membatalkan penambahan "
+                f"mahasiswa: {mhs.nama} ({mhs.nim}) (Durasi LIFO Undo: {t_elapsed:.4f} ms)"
             )
 
             return True
 
+        t_elapsed = (time.perf_counter() - t_start) * 1000
         print(
-            f"[UNDO FAILED] Jenis aksi '{jenis_aksi}' "
-            f"belum didukung."
+            f"[{waktu_sekarang}] [UNDO FAILED] Jenis aksi '{jenis_aksi}' "
+            f"belum didukung. (Waktu: {t_elapsed:.4f} ms)"
         )
-
         return False
 
-    # ==================================================
-    # 5. MENAMBAHKAN ANTREAN LAYANAN
-    # ==================================================
-
     def tambah_antrean_layanan(self, nim, jenis_layanan):
-        """
-        Menambahkan mahasiswa ke antrean layanan.
-
-        Queue menggunakan prinsip:
-        FIFO (First In, First Out)
-        """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         # Cari mahasiswa terlebih dahulu melalui Hash Table
         mhs = self.index_nim.search(nim)
 
         if not mhs:
+            t_elapsed = (time.perf_counter() - t_start) * 1000
             print(
-                f"[ANTREAN ERROR] NIM {nim} "
-                f"tidak terdaftar."
+                f"[{waktu_sekarang}] [ANTREAN ERROR] NIM {nim} "
+                f"tidak terdaftar. (Waktu: {t_elapsed:.4f} ms)"
             )
             return False
 
@@ -222,46 +187,38 @@ class Sismik:
             (mhs, jenis_layanan)
         )
 
+        t_elapsed = (time.perf_counter() - t_start) * 1000
         print(
-            f"[ANTREAN] {mhs.nama} masuk antrean "
-            f"untuk: {jenis_layanan}"
+            f"[{waktu_sekarang}] [ANTREAN FIFO] {mhs.nama} masuk antrean "
+            f"untuk: {jenis_layanan} (Durasi enqueue: {t_elapsed:.4f} ms)"
         )
 
         return True
 
-    # ==================================================
-    # 6. MEMPROSES ANTREAN
-    # ==================================================
-
     def proses_antrean_layanan(self):
-        """
-        Memproses mahasiswa paling depan dalam antrean.
-
-        Queue menggunakan prinsip FIFO.
-        """
+        t_start = time.perf_counter()
+        waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
         item = self.antrean_layanan.dequeue()
 
         if not item:
+            t_elapsed = (time.perf_counter() - t_start) * 1000
             print(
-                "[PROSES LAYANAN] Antrean kosong."
+                f"[{waktu_sekarang}] [PROSES LAYANAN] Antrean kosong. (Waktu: {t_elapsed:.4f} ms)"
             )
             return None
 
         mhs, jenis_layanan = item
+        t_elapsed = (time.perf_counter() - t_start) * 1000
 
         print(
-            f"[PROSES LAYANAN] Memproses "
-            f"{jenis_layanan} untuk "
-            f"{mhs.nama} ({mhs.nim})"
+            f"[{waktu_sekarang}] [PROSES LAYANAN FIFO] Memproses "
+            f"{jenis_layanan} untuk {mhs.nama} ({mhs.nim}) (Durasi dequeue: {t_elapsed:.4f} ms)"
         )
 
         return item
 
 
-# ==========================================================
-# UJI COBA PROGRAM
-# ==========================================================
 
 if __name__ == "__main__":
 
@@ -272,11 +229,6 @@ if __name__ == "__main__":
     print("        SISTEM INFORMASI AKADEMIK")
     print(f"        {app.fakultas}")
     print("=" * 60)
-
-    # ======================================================
-    # 1. PENYIMPANAN DATA BERURUTAN
-    #    Menggunakan ARRAY
-    # ======================================================
 
     print("\n=== 1. PENAMBAHAN DATA MAHASISWA ===")
 
@@ -306,23 +258,12 @@ if __name__ == "__main__":
 
     app.tampilkan_mahasiswa()
 
-    # ======================================================
-    # 2. PENCARIAN BERDASARKAN KEY
-    #    Menggunakan HASH TABLE
-    # ======================================================
-
     print("\n=== 2. PENCARIAN BERDASARKAN KEY ===")
 
-    # NIM digunakan sebagai KEY
     app.cari_mahasiswa_by_nim("2026002")
 
-    # NIM yang tidak ada
     app.cari_mahasiswa_by_nim("2026099")
 
-    # ======================================================
-    # 3. FITUR UNDO
-    #    Menggunakan STACK (LIFO)
-    # ======================================================
 
     print("\n=== 3. FITUR UNDO (STACK - LIFO) ===")
 
@@ -338,10 +279,6 @@ if __name__ == "__main__":
     print("\nDaftar mahasiswa setelah UNDO:")
     app.tampilkan_mahasiswa()
 
-    # ======================================================
-    # 4. ANTREAN PENGOLAHAN DATA
-    #    Menggunakan QUEUE (FIFO)
-    # ======================================================
 
     print("\n=== 4. ANTREAN LAYANAN (QUEUE - FIFO) ===")
 
@@ -356,15 +293,10 @@ if __name__ == "__main__":
     )
 
     print("\nMemproses antrean:")
-
-    # Budi masuk lebih dahulu,
-    # maka Budi diproses lebih dahulu
     app.proses_antrean_layanan()
 
-    # Siti diproses setelah Budi
     app.proses_antrean_layanan()
 
-    # Antrean sudah kosong
     app.proses_antrean_layanan()
 
     print("\n" + "=" * 60)

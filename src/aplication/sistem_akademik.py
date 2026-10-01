@@ -1,9 +1,4 @@
 class Mahasiswa:
-    """
-    Class untuk merepresentasikan data mahasiswa
-    dalam Sistem Akademik.
-    """
-
     def __init__(self, nama, nim, prodi, email, angkatan):
         # Atribut utama mahasiswa
         self.nama = nama
@@ -13,7 +8,6 @@ class Mahasiswa:
         self.angkatan = angkatan
 
     def tampilkan_data(self):
-        """Menampilkan informasi lengkap mahasiswa."""
         print("=== Data Mahasiswa ===")
         print(f"Nama      : {self.nama}")
         print(f"NIM       : {self.nim}")
@@ -22,21 +16,18 @@ class Mahasiswa:
         print(f"Angkatan  : {self.angkatan}")
 
     def ubah_email(self, email_baru):
-        """Mengubah email mahasiswa."""
         if not email_baru:
             raise ValueError("Email baru tidak boleh kosong")
 
         self.email = email_baru
 
     def ubah_prodi(self, prodi_baru):
-        """Mengubah program studi mahasiswa."""
         if not prodi_baru:
             raise ValueError("Prodi baru tidak boleh kosong")
 
         self.prodi = prodi_baru
 
     def identitas(self):
-        """Mengembalikan identitas singkat mahasiswa."""
         return f"{self.nama} ({self.nim})"
 
     def __repr__(self):
