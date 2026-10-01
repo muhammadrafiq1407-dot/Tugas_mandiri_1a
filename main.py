@@ -70,9 +70,6 @@ class Sismik:
 
 
     def tampilkan_mahasiswa(self):
-        """
-        Menampilkan seluruh mahasiswa menggunakan Array.
-        """
         t_start = time.perf_counter()
         waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
@@ -100,12 +97,6 @@ class Sismik:
 
 
     def cari_mahasiswa_by_nim(self, nim):
-        """
-        Mencari mahasiswa berdasarkan NIM menggunakan
-        Hash Table.
-
-        Average Case: O(1)
-        """
         t_start = time.perf_counter()
         waktu_sekarang = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
